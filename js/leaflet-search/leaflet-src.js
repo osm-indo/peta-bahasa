@@ -1,5 +1,5 @@
 /* @preserve
- * Leaflet 1.3.1, a JS library for interactive maps. http://leafletjs.com
+ * Leaflet 1.3.0+Detached: 1a38558f7b22f5ffacda5f6a1b8e60d54c361873.1a38558, a JS library for interactive maps. http://leafletjs.com
  * (c) 2010-2017 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 
@@ -9,7 +9,7 @@
 	(factory((global.L = {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "1.3.1";
+var version = "1.3.0+HEAD.1a38558";
 
 /*
  * @namespace Util
@@ -11498,7 +11498,7 @@ var TileLayer = GridLayer.extend({
 			s: this._getSubdomain(coords),
 			x: coords.x,
 			y: coords.y,
-			z: this._getZoomForUrl()
+			z: coords.z ? coords.z : this._getZoomForUrl()
 		};
 		if (this._map && !this._map.options.crs.infinite) {
 			var invertedY = this._globalTileRange.max.y - coords.y;
