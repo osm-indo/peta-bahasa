@@ -125,15 +125,13 @@ window.onload = function () {
 
 
 	//layer GeoJSON Provinsi
-	var prime = 'data/bahasa_provv.json';
-	$.getJSON(prime, function(data) {
+	var prov = 'data/bahasa_provv.json';
+	$.getJSON(prov, function(data) {
 		var geojson = L.geoJson(data, {
 		style : langStyle,
 		onEachFeature : langOnEachFeature
 		}
 		);
-
-		
 
 		function getFeatureColor(Grade){
 			if(Grade < 2){
@@ -226,36 +224,6 @@ window.onload = function () {
 	
 	map.addControl( searchControl );
 		
-//fungsi search pada BAHASA	
-// var searchControl = new L.Control.Search({
-// 		layer: csvlayer,
-// 		propertyName: 'bahasa',
-// 		// marker: false,
-// 		moveToLocation: function(latlng, title, map) {
-// 			//map.fitBounds( latlng.layer.getBounds() );
-// 			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-//   			map.setView(latlng, zoom); // access the zoom
-// 		}
-// 	});
-
-// 	searchControl.on('search:locationfound', function(e) {
-		
-// 		//console.log('search:locationfound', );
-
-// 		// map.removeLayer(this._markerSearch)
-
-// 		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
-// 		if(e.layer._popup)
-// 			e.layer.openPopup();
-
-// 	}).on('search:collapsed', function(e) {
-
-// 			csvlayer.eachLayer(function(layer) {	//restore feature color
-// 			csvlayer.resetStyle(layer);
-// 		});	
-// 	});
-	
-// 	map.addControl( searchControl );
 	});
 
 //fitur keterangan provinsi dan jumlah bahasa (pojok kanan atas)
@@ -277,39 +245,7 @@ window.onload = function () {
 	
 	console.log()	
 	  
-	
-	// baseMap.addTo(map);
-
-	//   var hs = 'data/rs_hs.csv';
-	
-	// $.get(hs, function(csvContents) {
-	// 	var hsIcon = new L.icon({
-	// 		iconUrl: 'images/marker/hospital_3.png',
-	// 		iconSize: [30,30],
-	// 		iconAnchor: [12, 41],
-	// 		popupAnchor: [1, -34]
-	// 			  });
-	// 	 csvlayer= L.geoCsv(csvContents, 
-	// 			{	firstLineTitles: true, 
-	// 				fieldSeparator: ',',
-	// 				latitudeTitle:'lat',
-	// 				longitudeTitle:'lng',
-	// 				onEachFeature:function(f,l) {
-	// 					var popup = "<p><b>"+f.properties.name+"</b> <br/> "+f.properties.addr_full+" <br/> "+f.properties.telp+" </p>";
-	// 					var m = L.marker(new L.LatLng(f.geometry.coordinates[1],f.geometry.coordinates[0]),{icon: hsIcon});
-	// 					m.bindPopup(popup);
-	// 					rs_3.addLayer(m);
-	// 				  }
-	// 			}
-	// 		);
-	//   });
-
-		
 	  var groupedOverLayMap = {
-		//   "Cashless": {
-		// 	"Prime Health": rs_2,
-		// 	"Prudential HS": rs_3
-		//   },
 		  "Info Bahasa": {
 			"Bahasa": rs_1,
 			"Provinsi": rs_2
