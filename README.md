@@ -1,2 +1,2 @@
-# peta-bahasa
+# Peta Bahasa
 Perkumpulan OpenStreetMap Indonesia (POI) bekerja sama dengan Wikimedia Indonesia membuat sebuah sistem pemetaan daring yang bertujuan untuk menginventarisir ragam bahasa daerah di Indonesia. Sistem pemetaan tersebut diharapkan dapat menjadi solusi terhadap akses informasi serta kontribusi masyarakat terhadap bahasa daerah dan pada akhirnya berkontribusi dalam membantu pemerintah dalam kegiatan konservasi dan revitalisasi bahasa daerah di Indonesia.
