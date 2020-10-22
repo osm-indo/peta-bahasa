@@ -1,0 +1,379 @@
+<html>
+
+<head>
+	<title>Peta Persebaran Bahasa</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="stylesheet" href="css/leaflet.css" />
+	<link rel="stylesheet" href="label/dist/leaflet.label.css"/>
+	<link rel="stylesheet" href="search/leaflet-search.css"/>
+	<link rel="stylesheet" href="src/leaflet.groupedlayercontrol.css"/>
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<script src="js/leaflet.js"></script>
+	<script src="js/leaflet-src.js"></script>
+	<script src="label/dist/leaflet.label.js"></script>
+	<script src="js/leaflet.featuregroup.subgroup.js"></script>
+	<script src="src/leaflet.groupedlayercontrol.js"></script>
+	<script src="search/leaflet-search.js"></script>
+
+<!-- js untuk draw -->
+	<script src="leaflet/Leaflet.draw.js"></script>
+    <script src="leaflet/Leaflet.Draw.Event.js"></script>
+    <link rel="stylesheet" href="leaflet/leaflet.draw.css"/>
+
+    <script src="leaflet/Toolbar.js"></script>
+    <script src="leaflet/Tooltip.js"></script>
+
+    <script src="leaflet/GeometryUtil.js"></script>
+    <script src="leaflet/LatLngUtil.js"></script>
+    <script src="leaflet/LineUtil.Intersect.js"></script>
+    <script src="leaflet/Polygon.Intersect.js"></script>
+    <script src="leaflet/Polyline.Intersect.js"></script>
+    <script src="leaflet/TouchEvents.js"></script>
+
+    <script src="leaflet/DrawToolbar.js"></script>
+    <script src="leaflet/Draw.Feature.js"></script>
+    <script src="leaflet/Draw.SimpleShape.js"></script>
+    <script src="leaflet/Draw.Polyline.js"></script>
+    <script src="leaflet/Draw.Marker.js"></script>
+    <script src="leaflet/Draw.Circle.js"></script>
+    <script src="leaflet/Draw.CircleMarker.js"></script>
+    <script src="leaflet/Draw.Polygon.js"></script>
+    <script src="leaflet/Draw.Rectangle.js"></script>
+
+
+    <script src="leaflet/EditToolbar.js"></script>
+    <script src="leaflet/EditToolbar.Edit.js"></script>
+    <script src="leaflet/EditToolbar.Delete.js"></script>
+
+    <script src="leaflet/Control.Draw.js"></script>
+
+    <script src="leaflet/Edit.Poly.js"></script>
+    <script src="leaflet/Edit.SimpleShape.js"></script>
+    <script src="leaflet/Edit.Rectangle.js"></script>
+    <script src="leaflet/Edit.Marker.js"></script>
+    <script src="leaflet/Edit.CircleMarker.js"></script>
+    <script src="leaflet/Edit.Circle.js"></script>
+
+	<style> h1 {background-image: url("images/banner.png");} </style>
+
+	<style type="text/css">
+        .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+		.header {
+  		background-color: #F1F1F1;
+  		text-align: center;
+  		padding: 20px;
+}
+    </style>
+</head>
+
+<body>
+	<h1>	</h1>
+	<!-- <img src="images/banner_3.png" alt="header" style="width:1520px;height:72px;"> -->
+
+	<script src="js/leaflet.geocsv.js"></script>
+	
+	<div id="map" style="height: 100%;border: 1px solid #AAA;"></div>
+    </div>
+
+<script>
+window.onload = function () {
+
+	var map = L.map( 'map', {
+  center: [-1.516,121.406],
+  minZoom: 4,
+  zoom: 5
+});
+	
+	var petaDasar =  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// 	var petaSatelit = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+// 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+// });
+
+	var baseMap = {
+			"Peta OpenStreetMap": petaDasar
+			// "Citra Satelit": petaSatelit
+			};
+	
+    var rs_1 = L.layerGroup().addTo(map);
+	var rs_2 = L.layerGroup().addTo(map);
+	var rs_3 = L.layerGroup().addTo(map);
+	
+	var rm = 'data/rs_reimburse.csv';
+	
+	// $.get(rm, function(csvContents) {
+	// 	var rmIcon = new L.icon({
+	// 		iconUrl: 'images/marker/map-marker.png',
+	// 		iconSize: [30,30],
+	// 		iconAnchor: [12, 41],
+	// 		popupAnchor: [1, -34]
+	// 			  });
+	// 	 csvlayer= L.geoCsv(csvContents, 
+	// 			{	firstLineTitles: true, 
+	// 				fieldSeparator: ',',
+	// 				latitudeTitle:'lat',
+	// 				longitudeTitle:'lng',
+	// 				onEachFeature:function(f,l) {
+	// 					var popup = "<p><b>Bahasa "+f.properties.bahasa+"</b> <br/>"+f.properties.dialek+" <br/> </p>"+f.properties.sumber+" <br/> </p>";
+	// 					var m = L.marker(new L.LatLng(f.geometry.coordinates[1],f.geometry.coordinates[0]),{icon: rmIcon});
+	// 					m.bindPopup(popup);
+	// 					rs_1.addLayer(m);
+	// 				  }
+	// 			}
+	// 		);
+	//   });
+
+	
+	//coba layer titik geojson
+	// var jawa = 'data/Data_Jawa_Bali_new.geojson';
+	$.getJSON("data/jawa_bali.geojson",function(pointData){
+	var pointIcon = L.icon({
+    iconUrl: 'images/marker/map-marker.png',
+    iconSize: [30,30]
+  	});
+  	var geojson1 = L.geoJson(pointData,{
+    pointToLayer: function(feature,latlng){
+      var marker = L.marker(latlng,{icon: pointIcon});
+      marker.bindPopup("<p><b>Bahasa: </b>"+feature.properties.bahasa + '<br/><b>Dialek: </b>' + feature.properties.dialek  + '<br/><b>Lokasi: </b>'  + feature.properties.lokasi_seb + '<br/><b>Catatan: </b>' 
+	   + feature.properties.catatan +  '<br/><b>Wiki Link: </b>'  + feature.properties.wiki_link + '<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>' );
+      return marker;
+    }
+ 	}).addTo(map);
+	rs_1.addLayer(geojson1);
+	}); 
+
+
+
+	//layer GeoJSON Provinsi
+	var prime = 'data/bahasa_provv.json';
+	$.getJSON(prime, function(data) {
+		var geojson = L.geoJson(data, {
+		style : langStyle,
+		onEachFeature : langOnEachFeature
+		}
+		);
+
+		
+
+		function getFeatureColor(Grade){
+			if(Grade < 2){
+				return '#EEC4BA';
+			}else if (Grade < 5){
+				return '#E5866D';
+			}
+			else{
+				return '#DE4F29';
+			}
+		};
+		
+		function langStyle(feature){ 
+			return{
+				fillColor: getFeatureColor(feature.properties.Grade),
+				weight: 2,
+				opacity:50,
+				color:'black',
+				dashArray:3,
+				fillOpacity : 50
+			}
+		};
+		
+		function highlightFeature(e){
+			var layer = e.target;
+			layer.setStyle(
+				{
+					weight: 4,
+					color: 'yellow',
+					dashArray:3
+				}	
+			);
+			if(!L.Browser.ie && !L.Browser.opera){
+				layer.bringToFront();
+			}
+			
+			info.update(layer.feature.properties);
+		}	
+			
+		function resetHighlight(e){
+			geojson.resetStyle(e.target);
+		}
+			
+		function zoomToFeature(e){
+			map.fitBounds(e.target.getBounds());
+		}
+				
+		function langOnEachFeature(feature,layer){
+			layer.on(
+				{
+					mouseover : highlightFeature,
+					mouseout : resetHighlight,
+					click : zoomToFeature
+				}
+			);
+		}
+
+		geojson.addData(data);
+		geojson.addTo(map);
+		rs_2.addLayer(geojson);
+
+//fungsi search pada PROVINSI
+		var searchControl = new L.Control.Search({
+		layer: geojson,
+		propertyName: 'PROVINSI',
+		marker: false,
+		moveToLocation: function(latlng, title, map) {
+			//map.fitBounds( latlng.layer.getBounds() );
+			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+  			map.setView(latlng, zoom); // access the zoom
+		}
+	});
+
+	searchControl.on('search:locationfound', function(e) {
+		
+		//console.log('search:locationfound', );
+
+		//map.removeLayer(this._markerSearch)
+
+		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
+		if(e.layer._popup)
+			e.layer.openPopup();
+
+	}).on('search:collapsed', function(e) {
+
+		geojson.eachLayer(function(layer) {	//restore feature color
+			geojson.resetStyle(layer);
+		});	
+	});
+	
+	map.addControl( searchControl );
+		
+//fungsi search pada BAHASA	
+// var searchControl = new L.Control.Search({
+// 		layer: csvlayer,
+// 		propertyName: 'bahasa',
+// 		// marker: false,
+// 		moveToLocation: function(latlng, title, map) {
+// 			//map.fitBounds( latlng.layer.getBounds() );
+// 			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+//   			map.setView(latlng, zoom); // access the zoom
+// 		}
+// 	});
+
+// 	searchControl.on('search:locationfound', function(e) {
+		
+// 		//console.log('search:locationfound', );
+
+// 		// map.removeLayer(this._markerSearch)
+
+// 		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
+// 		if(e.layer._popup)
+// 			e.layer.openPopup();
+
+// 	}).on('search:collapsed', function(e) {
+
+// 			csvlayer.eachLayer(function(layer) {	//restore feature color
+// 			csvlayer.resetStyle(layer);
+// 		});	
+// 	});
+	
+// 	map.addControl( searchControl );
+	});
+
+//fitur keterangan provinsi dan jumlah bahasa (pojok kanan atas)
+		var info = L.control();
+
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); 
+			this.update();
+			return this._div;
+		};
+
+		info.update = function (props) {
+			this._div.innerHTML = '<h4>Jumlah Bahasa Per Provinsi</h4>' +  (props ?
+				'<b> Provinsi: ' + props.PROVINSI + '</b>' + '<br><b> Jumlah Bahasa: ' + props.jml
+				: 'Arahkan ke salah satu provinsi');
+		};
+		
+		info.addTo(map);
+	
+	console.log()	
+	  
+	
+	// baseMap.addTo(map);
+
+	//   var hs = 'data/rs_hs.csv';
+	
+	// $.get(hs, function(csvContents) {
+	// 	var hsIcon = new L.icon({
+	// 		iconUrl: 'images/marker/hospital_3.png',
+	// 		iconSize: [30,30],
+	// 		iconAnchor: [12, 41],
+	// 		popupAnchor: [1, -34]
+	// 			  });
+	// 	 csvlayer= L.geoCsv(csvContents, 
+	// 			{	firstLineTitles: true, 
+	// 				fieldSeparator: ',',
+	// 				latitudeTitle:'lat',
+	// 				longitudeTitle:'lng',
+	// 				onEachFeature:function(f,l) {
+	// 					var popup = "<p><b>"+f.properties.name+"</b> <br/> "+f.properties.addr_full+" <br/> "+f.properties.telp+" </p>";
+	// 					var m = L.marker(new L.LatLng(f.geometry.coordinates[1],f.geometry.coordinates[0]),{icon: hsIcon});
+	// 					m.bindPopup(popup);
+	// 					rs_3.addLayer(m);
+	// 				  }
+	// 			}
+	// 		);
+	//   });
+
+		
+	  var groupedOverLayMap = {
+		//   "Cashless": {
+		// 	"Prime Health": rs_2,
+		// 	"Prudential HS": rs_3
+		//   },
+		  "Info Bahasa": {
+			"Bahasa": rs_1,
+			"Provinsi": rs_2
+		  }
+		};
+
+        L.control.groupedLayers(baseMap, groupedOverLayMap).addTo(map);
+
+//fungsi draw
+L.control.layers({
+        'osm': osm.addTo(map),
+        "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            attribution: 'google'
+        })
+    }, { 'drawlayer': drawnItems }, { position: 'topright', collapsed: false }).addTo(map);
+
+		map.addControl(new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems,
+            poly: {
+                allowIntersection: false
+            }
+        },
+        draw: {
+            polygon: {
+                allowIntersection: false,
+                showArea: true
+            }
+        }
+    }));
+
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+
+        drawnItems.addLayer(layer);
+    });
+}
+		
+</script>
+</body>
+</html>
