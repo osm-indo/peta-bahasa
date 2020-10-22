@@ -103,35 +103,9 @@ window.onload = function () {
 	
     var rs_1 = L.layerGroup().addTo(map);
 	var rs_2 = L.layerGroup().addTo(map);
-	var rs_3 = L.layerGroup().addTo(map);
-	
-	var rm = 'data/rs_reimburse.csv';
-	
-	// $.get(rm, function(csvContents) {
-	// 	var rmIcon = new L.icon({
-	// 		iconUrl: 'images/marker/map-marker.png',
-	// 		iconSize: [30,30],
-	// 		iconAnchor: [12, 41],
-	// 		popupAnchor: [1, -34]
-	// 			  });
-	// 	 csvlayer= L.geoCsv(csvContents, 
-	// 			{	firstLineTitles: true, 
-	// 				fieldSeparator: ',',
-	// 				latitudeTitle:'lat',
-	// 				longitudeTitle:'lng',
-	// 				onEachFeature:function(f,l) {
-	// 					var popup = "<p><b>Bahasa "+f.properties.bahasa+"</b> <br/>"+f.properties.dialek+" <br/> </p>"+f.properties.sumber+" <br/> </p>";
-	// 					var m = L.marker(new L.LatLng(f.geometry.coordinates[1],f.geometry.coordinates[0]),{icon: rmIcon});
-	// 					m.bindPopup(popup);
-	// 					rs_1.addLayer(m);
-	// 				  }
-	// 			}
-	// 		);
-	//   });
 
 	
-	//coba layer titik geojson
-	// var jawa = 'data/Data_Jawa_Bali_new.geojson';
+	//layer GeoJSON bahasa
 	$.getJSON("data/jawa_bali.geojson",function(pointData){
 	var pointIcon = L.icon({
     iconUrl: 'images/marker/map-marker.png',
