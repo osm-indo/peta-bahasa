@@ -117,6 +117,53 @@ window.onload = function () {
     }
  	}).addTo(map);
 	rs_1.addLayer(geojson1);
+
+//fungsi search pada BAHASA	
+var searchControl = new L.control.search({
+		layer: geojson1,
+		initial: false,
+		propertyName: 'bahasa'
+		// buildTip: function(text, val) {
+		// 	var type = val.layer.feature.properties.bahasa;
+		// 	return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>';
+		// }
+		// moveToLocation: function(latlng, title, map) {
+		// 	map.fitBounds( latlng.layer.getBounds() );
+		// 	var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+  		// 	map.setView(latlng, zoom); // access the zoom
+		// }
+	})
+
+// var searchControl = new L.Control.Search({
+// 		layer: geojson1,
+// 		propertyName: 'bahasa',
+// 		// marker: false,
+// 		moveToLocation: function(latlng, title, map) {
+// 			// map.fitBounds( latlng.layer.getBounds() );
+// 			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+//   			map.setView(latlng, zoom); // access the zoom
+// 		}
+// 	});
+
+// 	searchControl.on('search:locationfound', function(e) {
+
+// 		//console.log('search:locationfound', );
+
+// 		// map.removeLayer(this._markerSearch)
+
+// 		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
+// 		if(e.layer._popup)
+// 			e.layer.openPopup();
+
+// 	}).on('search:collapsed', function(e) {
+
+// 			geojson1.eachLayer(function(layer) {	//restore feature color
+// 			geojson1.resetStyle(layer);
+// 		});	
+// 	});
+
+	map.addControl( searchControl );
+
 	}); 
 
 
@@ -220,6 +267,8 @@ window.onload = function () {
 	});
 	
 	map.addControl( searchControl );
+
+
 		
 	});
 
