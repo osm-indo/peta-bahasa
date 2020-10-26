@@ -18,6 +18,10 @@
 	<script src="js/leaflet-groupedlayer/leaflet.groupedlayercontrol.js"></script>
 	<script src="js/leaflet-search/leaflet-search.js"></script>
 
+	<!-- untuk markercluster -->
+	<link rel="stylesheet" href="js/leaflet-cluster/dist/MarkerCluster.Default.css"/>
+	<script src="js/leaflet-cluster/dist/leaflet.markercluster.js"></script>
+	
 <!-- js untuk draw -->
 	<script src="js/leaflet-draw/Leaflet.draw.js"></script>
     <script src="js/leaflet-draw/Leaflet.Draw.Event.js"></script>
@@ -64,8 +68,42 @@
 		.header {
   		background-color: #F1F1F1;
   		text-align: center;
-  		padding: 20px;
-}
+  		padding: 20px;		
+		}
+		.legend {
+		  padding: 6px 8px;
+		  font: 14px Arial, Helvetica, sans-serif;
+		  background: white;
+		  background: rgba(255, 255, 255, 0.8);
+		  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+		  border-radius: 5px;
+		  line-height: 24px;
+		  color: #555;
+		}
+		.legend h4 {
+		  text-align: center;
+		  font-size: 16px;
+		  margin: 2px 12px 8px;
+		  color: #777;
+		}
+
+		.legend span {
+		  position: relative;
+		  bottom: 3px;
+		}
+
+		.legend i {
+		  width: 18px;
+		  height: 18px;
+		  float: left;
+		  margin: 0 8px 0 0;
+		  opacity: 0.7;
+		}
+
+		.legend i.icon {
+		  background-size: 18px;
+		  background-color: rgba(255, 255, 255, 1);
+		}
     </style>
 </head>
 
@@ -108,16 +146,26 @@ window.onload = function () {
     iconUrl: 'images/marker/map-marker.png',
     iconSize: [30,30]
   	});
+  	var klaster = L.markerClusterGroup();
   	var geojson1 = L.geoJson(pointData,{
-    pointToLayer: function(feature,latlng){
-      var marker = L.marker(latlng,{icon: pointIcon});
-      marker.bindPopup("<p><b>Bahasa: </b>"+feature.properties.bahasa + '<br/><b>Dialek: </b>' + feature.properties.dialek  + '<br/><b>Lokasi: </b>'  + feature.properties.lokasi_seb + '<br/><b>Catatan: </b>' 
-	   + feature.properties.catatan +  '<br/><b>Wiki Link: </b>'  + feature.properties.wiki_link + '<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>' );
-      return marker;
-    }
- 	}).addTo(map);
-	rs_1.addLayer(geojson1);
-	}); 
+	style: function (feature) {
+	return pointIcon;
+	},
+	pointToLayer: function (feature, latlng) {
+	return new L.Marker (latlng, {icon: pointIcon
+	});
+	},
+    onEachFeature: function(feature,layer){layer.bindPopup("<p><b>Bahasa: </b>" + feature.properties.bahasa + '<br/><b>Dialek: </b>' + feature.properties.dialek +
+	'<br/><b>Lokasi: </b>' + feature.properties.lokasi_seb +
+	'<br/><b>Catatan: </b>' + feature.properties.catatan + 
+	'<br/><b>Wiki Link: </b>'  + feature.properties.wiki_link +
+	'<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>'	
+	);}
+ 	});
+	rs_1.addLayer(klaster);
+	klaster.addLayer(geojson1);
+	map.fitounds(klaster.getBounds());
+	});
 
 
 
@@ -220,6 +268,19 @@ window.onload = function () {
 	});
 	
 	map.addControl( searchControl );
+		
+		var legend = L.control({ position: "bottomleft" });
+
+		legend.onAdd = function(map) {
+		var div = L.DomUtil.create("div", "legend");
+		div.innerHTML += "<h4>Jumlah Bahasa Per Provinsi</h4>";
+		div.innerHTML += '<i style="background: #EEC4BA"></i><span>Kurang dari 25 Bahasa</span><br>';
+		div.innerHTML += '<i style="background: #E5866D"></i><span>25-100</span><br>';
+		div.innerHTML += '<i style="background: #DE4F29"></i><span>Lebih dari 100 Bahasa</span><br>';
+		return div;
+	};
+
+	legend.addTo(map);
 		
 	});
 
