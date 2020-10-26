@@ -143,30 +143,37 @@ window.onload = function () {
 	//layer GeoJSON bahasa
 	$.getJSON("data/Data_2.geojson",function(pointData){
 	var pointIcon = L.icon({
-    iconUrl: 'images/marker/map-marker.png',
-    iconSize: [30,30]
+    	iconUrl: 'images/marker/map-marker.png',
+    	iconSize: [30,30]
   	});
   	var klaster = L.markerClusterGroup();
   	var geojson1 = L.geoJson(pointData,{
-	style: function (feature) {
-	return pointIcon;
+		style: function (feature) {
+		return pointIcon;
 	},
 	pointToLayer: function (feature, latlng) {
-	return new L.Marker (latlng, {icon: pointIcon
-	});
+		return new L.Marker (latlng, {icon: pointIcon});
 	},
     onEachFeature: function(feature,layer){layer.bindPopup("<p><b>Bahasa: </b>" + feature.properties.bahasa + '<br/><b>Dialek: </b>' + feature.properties.dialek +
 	'<br/><b>Lokasi: </b>' + feature.properties.lokasi_seb +
 	'<br/><b>Catatan: </b>' + feature.properties.catatan + 
 	'<br/><b>Wiki Link: </b>'  + feature.properties.wiki_link +
-	'<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>'	
-	);}
+	'<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>');}
  	});
+
+	
 	rs_1.addLayer(klaster);
 	klaster.addLayer(geojson1);
-	map.fitounds(klaster.getBounds());
+	//fungsi search pada BAHASA	
+	var searchControl = new L.control.search({
+		layer: klaster,
+		initial: true,
+		propertyName: 'bahasa'
+	}).addTo(map);
+	map.fitounds(klaster.getBounds()); //fungsi typo?
+	// map.addControl( searchControl );
+	 	
 	});
-
 
 
 	//layer GeoJSON Provinsi
