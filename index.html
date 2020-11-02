@@ -71,38 +71,20 @@
   		padding: 20px;		
 		}
 		.legend {
-		  padding: 6px 8px;
-		  font: 14px Arial, Helvetica, sans-serif;
-		  background: white;
-		  background: rgba(255, 255, 255, 0.8);
-		  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-		  border-radius: 5px;
-		  line-height: 24px;
-		  color: #555;
+		padding: 6px 8px;
+		background-color: rgba(255,255,255,0.8);
+		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+		border-radius: 5px;
 		}
-		.legend h4 {
-		  text-align: center;
-		  font-size: 16px;
-		  margin: 2px 12px 8px;
-		  color: #777;
-		}
-
-		.legend span {
-		  position: relative;
-		  bottom: 3px;
-		}
-
 		.legend i {
-		  width: 18px;
-		  height: 18px;
-		  float: left;
-		  margin: 0 8px 0 0;
-		  opacity: 0.7;
+		width: 18px;
+		height: 18px;
+		float: left;
+		margin-right: 8px;
+		opacity: 0.7;
 		}
-
-		.legend i.icon {
-		  background-size: 18px;
-		  background-color: rgba(255, 255, 255, 1);
+		div.legend.leaflet-control br {
+		clear: both;
 		}
     </style>
 </head>
@@ -178,25 +160,44 @@ window.onload = function () {
 		}
 		);
 
-		function getFeatureColor(Grade){
-			if(Grade < 2){
-				return '#EEC4BA';
-			}else if (Grade < 5){
-				return '#E5866D';
+		function getFeatureColor(jml){
+			if(jml < 6){
+				return '#e5f5e0';
+			}
+			else if (jml < 11){
+				return '#c7e9c0';
+			}
+			else if (jml < 16){
+				return '#a1d99b';
+			}
+			else if (jml < 21){
+				return '#74c476';
+			}
+			else if (jml < 26){
+				return '#41ab5d';
+			}
+			else if (jml < 71){
+				return '#0C7436';
+			}
+			else if (jml < 81){
+				return '#03642A';
+			}
+			else if (jml < 110){
+				return '#00441b';
 			}
 			else{
-				return '#DE4F29';
+				return '#013315';
 			}
 		};
 		
 		function langStyle(feature){ 
 			return{
-				fillColor: getFeatureColor(feature.properties.Grade),
+				fillColor: getFeatureColor(feature.properties.jml),
 				weight: 2,
 				opacity:50,
 				color:'black',
 				dashArray:3,
-				fillOpacity : 0.3
+				fillOpacity : 0.4
 			}
 		};
 		
@@ -273,10 +274,17 @@ window.onload = function () {
 
 		legend.onAdd = function(map) {
 		var div = L.DomUtil.create("div", "legend");
-		div.innerHTML += "<h4>Jumlah Bahasa Per Provinsi</h4>";
-		div.innerHTML += '<i style="background: #EEC4BA"></i><span>Kurang dari 25 Bahasa</span><br>';
-		div.innerHTML += '<i style="background: #E5866D"></i><span>25-100</span><br>';
-		div.innerHTML += '<i style="background: #DE4F29"></i><span>Lebih dari 100 Bahasa</span><br>';
+		div.innerHTML += "Jumlah Bahasa Per Provinsi<br>";
+		div.innerHTML += '<i style="background: #e5f5e0"></i>1-5<br>';
+		div.innerHTML += '<i style="background: #c7e9c0"></i>6-10<br>';
+		div.innerHTML += '<i style="background: #a1d99b"></i>11-15<br>';
+		div.innerHTML += '<i style="background: #74c476"></i>16-20<br>';
+		div.innerHTML += '<i style="background: #41ab5d"></i>21-25<br>';
+		div.innerHTML += '<i style="background: #0C7436"></i>61-70<br>';
+		div.innerHTML += '<i style="background: #03642A"></i>71-80<br>';
+		div.innerHTML += '<i style="background: #00441b"></i>100-110<br>';
+		div.innerHTML += '<i style="background: #013315"></i>>111<br>';
+		
 		return div;
 	};
 
