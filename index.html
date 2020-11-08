@@ -170,12 +170,12 @@ window.onload = function () {
 		initial: true,
 		propertyName: 'bahasa'
 	}).addTo(map);
-	map.fitounds(klaster.getBounds()); //fungsi typo?
+	map.fitounds(klaster.getBounds()); //fungsi typo but somehow it works
 	// map.addControl( searchControl );
 	 	
 	});
 
-
+/////////////////////////////////////////////////////////////////
 	//layer GeoJSON Provinsi
 	var prov = 'data/bahasa_provv.json';
 	$.getJSON(prov, function(data) {
@@ -258,10 +258,6 @@ window.onload = function () {
 	});
 
 	searchControl.on('search:locationfound', function(e) {
-		
-		//console.log('search:locationfound', );
-
-		//map.removeLayer(this._markerSearch)
 
 		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
 		if(e.layer._popup)
@@ -276,6 +272,95 @@ window.onload = function () {
 	
 	map.addControl( searchControl );
 		
+
+//create Leaflet control for selector
+var selector = L.control({
+  position: 'topleft',
+
+});
+
+
+selector.onAdd = function(map) {
+  //create div container
+  var div = L.DomUtil.create('div', 'mySelector');
+  //create select element within container (with id, so it can be populated later)
+  div.innerHTML = '<select id="marker_select"><option value="init">(pilih provinsi)</option></select>';
+  return div;
+};
+
+selector.addTo(map);
+
+//have to use eachFeature (instead of onEachFeature) to create selector options
+//because _leaflet_id doesn't exist until after each feature is created
+geojson.eachLayer(function(layer) {
+  //create option in selector element
+  //with content set to city name
+  //and value set to the layer's internal ID
+  var optionElement = document.createElement("option");
+  optionElement.innerHTML = layer.feature.properties.PROVINSI;
+  optionElement.value = layer._leaflet_id;
+  L.DomUtil.get("marker_select").appendChild(optionElement);
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//setting up event listeners//
+////////////////////////////////////////////////////////////////////////////////////////////
+function clickZoom(e) {
+    map.setView(e.target.getLatLng(),5);
+}
+function zoomToFeature(e){
+			map.fitBounds(e.target.getBounds());
+		};
+
+		function zoomToFeatures(latlng, title, map) {
+			map.fitBounds( latlng.layer.getBounds() );
+			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+  			map.setView(latlng, zoom); // access the zoom
+		}
+
+var marker_select = L.DomUtil.get("marker_select");
+
+marker_select.addEventListener("click", function (e){
+	console.log(e);
+  map.panTo(geojson.getLatLng());
+});
+
+//prevent clicks on the selector from propagating through to the map
+//(otherwise popups will close immediately after opening)
+// L.DomEvent.addListener(marker_select, 'click', function(e) {
+// //   L.DomEvent.stopPropagation(e);
+	
+// });
+
+console.log(L.DomEvent);
+
+// L.DomEvent.addListener(marker_select, 'change', changeHandler);
+
+// function changeHandler(e) {
+//   if (e.target.value == "init") {
+//     map.closePopup();
+//   } else {
+// 	e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
+// 		if(e.layer._popup)
+// 			e.layer.openPopup();
+//   }
+// }
+
+// marker_select.on(marker_select, 'click', function(e) {
+
+// e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
+// if(e.layer._popup)
+// 	e.layer.openPopup();
+
+// }).on('search:collapsed', function(e) {
+
+// geojson.eachLayer(function(layer) {	//restore feature color
+// 	geojson.resetStyle(layer);
+// });	
+// });
+
+	
+		//LEGENDA PROVINSI
 		var legend = L.control({ position: "bottomleft" });
 
 		legend.onAdd = function(map) {
@@ -290,6 +375,9 @@ window.onload = function () {
 	legend.addTo(map);
 		
 	});
+
+
+
 
 //fitur keterangan provinsi dan jumlah bahasa (pojok kanan atas)
 		var info = L.control();
