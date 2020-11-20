@@ -162,31 +162,22 @@ window.onload = function () {
 
 		function getFeatureColor(jml){
 			if(jml < 6){
-				return '#e5f5e0';
-			}
-			else if (jml < 11){
 				return '#c7e9c0';
 			}
-			else if (jml < 16){
+			else if (jml < 11){
 				return '#a1d99b';
 			}
-			else if (jml < 21){
+			else if (jml < 16){
 				return '#74c476';
 			}
-			else if (jml < 26){
+			else if (jml < 21){
 				return '#41ab5d';
 			}
-			else if (jml < 71){
-				return '#0C7436';
-			}
-			else if (jml < 81){
-				return '#03642A';
-			}
-			else if (jml < 110){
-				return '#00441b';
+			else if (jml < 26){
+				return '#238b45';
 			}
 			else{
-				return '#013315';
+				return '#005a32';
 			}
 		};
 		
@@ -275,15 +266,12 @@ window.onload = function () {
 		legend.onAdd = function(map) {
 		var div = L.DomUtil.create("div", "legend");
 		div.innerHTML += "Jumlah Bahasa Per Provinsi<br>";
-		div.innerHTML += '<i style="background: #e5f5e0"></i>1-5<br>';
-		div.innerHTML += '<i style="background: #c7e9c0"></i>6-10<br>';
-		div.innerHTML += '<i style="background: #a1d99b"></i>11-15<br>';
-		div.innerHTML += '<i style="background: #74c476"></i>16-20<br>';
-		div.innerHTML += '<i style="background: #41ab5d"></i>21-25<br>';
-		div.innerHTML += '<i style="background: #0C7436"></i>61-70<br>';
-		div.innerHTML += '<i style="background: #03642A"></i>71-80<br>';
-		div.innerHTML += '<i style="background: #00441b"></i>100-110<br>';
-		div.innerHTML += '<i style="background: #013315"></i>>111<br>';
+		div.innerHTML += '<i style="background: #c7e9c0"></i>1-5<br>';
+		div.innerHTML += '<i style="background: #a1d99b"></i>6-10<br>';
+		div.innerHTML += '<i style="background: #74c476"></i>11-15<br>';
+		div.innerHTML += '<i style="background: #41ab5d"></i>16-20<br>';
+		div.innerHTML += '<i style="background: #238b45"></i>21-25<br>';
+		div.innerHTML += '<i style="background: #005a32"></i>> 25<br>';
 		
 		return div;
 	};
