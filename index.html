@@ -125,32 +125,43 @@ window.onload = function () {
 	//layer GeoJSON bahasa
 	$.getJSON("data/Data_2.geojson",function(pointData){
 	var pointIcon = L.icon({
-    iconUrl: 'images/marker/map-marker.png',
-    iconSize: [30,30]
+    	iconUrl: 'images/marker/map-marker.png',
+    	iconSize: [30,30]
   	});
   	var klaster = L.markerClusterGroup();
   	var geojson1 = L.geoJson(pointData,{
-	style: function (feature) {
-	return pointIcon;
+		style: function (feature) {
+		return pointIcon;
 	},
 	pointToLayer: function (feature, latlng) {
-	return new L.Marker (latlng, {icon: pointIcon
-	});
+		return new L.Marker (latlng, {icon: pointIcon});
 	},
     onEachFeature: function(feature,layer){layer.bindPopup("<p><b>Bahasa: </b>" + feature.properties.bahasa + '<br/><b>Dialek: </b>' + feature.properties.dialek +
 	'<br/><b>Lokasi: </b>' + feature.properties.lokasi_sebaran +
 	'<br/><b>Catatan: </b>' + feature.properties.catatan + 
 	'<br/><b>Wiki Link: </b>'  + feature.properties.wiki_link +
-	'<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>'	
-	);}
+	'<br/><b>Sumber: </b>'  + '<a href="'+ feature.properties.sumber + '" target="_blank">Visit Website</a>');}
  	});
+
+	
 	rs_1.addLayer(klaster);
 	klaster.addLayer(geojson1);
+<<<<<<< HEAD
 	map.fitbounds(klaster.getBounds());
+=======
+	//fungsi search pada BAHASA	
+	var searchControl = new L.control.search({
+		layer: klaster,
+		initial: true,
+		propertyName: 'bahasa'
+	}).addTo(map);
+	map.fitounds(klaster.getBounds()); //fungsi typo but somehow it works
+	// map.addControl( searchControl );
+	 	
+>>>>>>> search
 	});
 
-
-
+/////////////////////////////////////////////////////////////////
 	//layer GeoJSON Provinsi
 	var prov = 'data/bahasa_provv.json';
 	$.getJSON(prov, function(data) {
@@ -230,37 +241,58 @@ window.onload = function () {
 		geojson.addTo(map);
 		rs_2.addLayer(geojson);
 
-//fungsi search pada PROVINSI
-		var searchControl = new L.Control.Search({
-		layer: geojson,
-		propertyName: 'PROVINSI',
-		marker: false,
-		moveToLocation: function(latlng, title, map) {
-			//map.fitBounds( latlng.layer.getBounds() );
-			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-  			map.setView(latlng, zoom); // access the zoom
-		}
+//fungsi search dropdown list pada PROVINSI
+var selector = L.control({
+  position: 'topright',
+
+});
+
+
+selector.onAdd = function(map) {
+  //create div container
+  var div = L.DomUtil.create('div', 'mySelector');
+  //create select element within container (with id, so it can be populated later)
+  div.innerHTML = '<select id="marker_select"><option value="init">(pilih provinsi)</option></select>';
+  return div;
+};
+
+selector.addTo(map);
+
+//have to use eachFeature (instead of onEachFeature) to create selector options
+//because _leaflet_id doesn't exist until after each feature is created
+geojson.eachLayer(function(layer) {
+  //create option in selector element
+  //with content set to city name
+  //and value set to the layer's internal ID
+  var optionElement = document.createElement("option");
+  optionElement.innerHTML = layer.feature.properties.PROVINSI;
+  optionElement.value = layer._leaflet_id;
+  L.DomUtil.get("marker_select").appendChild(optionElement);
+});
+
+var marker_select = L.DomUtil.get("marker_select");
+
+marker_select.addEventListener("click", function (e){
+  map.fitBounds(geojson._layers[e.target.value].getBounds());
+  var layer = geojson._layers[e.target.value];
+  layer.setStyle(
+				{
+					weight: 6,
+					color: 'red',
+					dashArray:3
+				}	
+			);
+	info.update(layer.feature.properties);
+	layer.on('search:collapsed', function(e) {
+
+	geojson.eachLayer(function(layer) {	//restore feature color
+	geojson.resetStyle(layer);
 	});
+	})	
+});
 
-	searchControl.on('search:locationfound', function(e) {
-		
-		//console.log('search:locationfound', );
-
-		//map.removeLayer(this._markerSearch)
-
-		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
-		if(e.layer._popup)
-			e.layer.openPopup();
-
-	}).on('search:collapsed', function(e) {
-
-		geojson.eachLayer(function(layer) {	//restore feature color
-			geojson.resetStyle(layer);
-		});	
-	});
 	
-	map.addControl( searchControl );
-		
+		//LEGENDA PROVINSI
 		var legend = L.control({ position: "bottomleft" });
 
 		legend.onAdd = function(map) {
@@ -279,6 +311,9 @@ window.onload = function () {
 	legend.addTo(map);
 		
 	});
+
+
+
 
 //fitur keterangan provinsi dan jumlah bahasa (pojok kanan atas)
 		var info = L.control();
