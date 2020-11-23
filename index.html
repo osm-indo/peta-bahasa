@@ -245,37 +245,9 @@ window.onload = function () {
 		geojson.addTo(map);
 		rs_2.addLayer(geojson);
 
-//fungsi search pada PROVINSI
-		var searchControl = new L.Control.Search({
-		layer: geojson,
-		propertyName: 'PROVINSI',
-		marker: false,
-		moveToLocation: function(latlng, title, map) {
-			//map.fitBounds( latlng.layer.getBounds() );
-			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-  			map.setView(latlng, zoom); // access the zoom
-		}
-	});
-
-	searchControl.on('search:locationfound', function(e) {
-
-		e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
-		if(e.layer._popup)
-			e.layer.openPopup();
-
-	}).on('search:collapsed', function(e) {
-
-		geojson.eachLayer(function(layer) {	//restore feature color
-			geojson.resetStyle(layer);
-		});	
-	});
-	
-	map.addControl( searchControl );
-		
-
-//create Leaflet control for selector
+//fungsi search dropdown list pada PROVINSI
 var selector = L.control({
-  position: 'topleft',
+  position: 'topright',
 
 });
 
@@ -302,62 +274,26 @@ geojson.eachLayer(function(layer) {
   L.DomUtil.get("marker_select").appendChild(optionElement);
 });
 
-////////////////////////////////////////////////////////////////////////////////////////////
-//setting up event listeners//
-////////////////////////////////////////////////////////////////////////////////////////////
-function clickZoom(e) {
-    map.setView(e.target.getLatLng(),5);
-}
-function zoomToFeature(e){
-			map.fitBounds(e.target.getBounds());
-		};
-
-		function zoomToFeatures(latlng, title, map) {
-			map.fitBounds( latlng.layer.getBounds() );
-			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-  			map.setView(latlng, zoom); // access the zoom
-		}
-
 var marker_select = L.DomUtil.get("marker_select");
 
 marker_select.addEventListener("click", function (e){
-	console.log(e);
-  map.panTo(geojson.getLatLng());
+  map.fitBounds(geojson._layers[e.target.value].getBounds());
+  var layer = geojson._layers[e.target.value];
+  layer.setStyle(
+				{
+					weight: 6,
+					color: 'red',
+					dashArray:3
+				}	
+			);
+	info.update(layer.feature.properties);
+	layer.on('search:collapsed', function(e) {
+
+	geojson.eachLayer(function(layer) {	//restore feature color
+	geojson.resetStyle(layer);
+	});
+	})	
 });
-
-//prevent clicks on the selector from propagating through to the map
-//(otherwise popups will close immediately after opening)
-// L.DomEvent.addListener(marker_select, 'click', function(e) {
-// //   L.DomEvent.stopPropagation(e);
-	
-// });
-
-console.log(L.DomEvent);
-
-// L.DomEvent.addListener(marker_select, 'change', changeHandler);
-
-// function changeHandler(e) {
-//   if (e.target.value == "init") {
-//     map.closePopup();
-//   } else {
-// 	e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
-// 		if(e.layer._popup)
-// 			e.layer.openPopup();
-//   }
-// }
-
-// marker_select.on(marker_select, 'click', function(e) {
-
-// e.layer.setStyle({fillColor: 'yellow', color: '#0f0'});
-// if(e.layer._popup)
-// 	e.layer.openPopup();
-
-// }).on('search:collapsed', function(e) {
-
-// geojson.eachLayer(function(layer) {	//restore feature color
-// 	geojson.resetStyle(layer);
-// });	
-// });
 
 	
 		//LEGENDA PROVINSI
