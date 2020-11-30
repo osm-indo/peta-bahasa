@@ -369,7 +369,32 @@ marker_select.addEventListener("click", function (e){
 //     });
 
 //start draw
+// let drawnItems = L.featureGroup().addTo(map);
+
+// Create feature group for drawn items & layer group for previously drawn items
 let drawnItems = L.featureGroup().addTo(map);
+let cartoData = L.layerGroup().addTo(map);
+
+// Add Data from Carto using the SQL API
+let url = 'http://134.209.97.166:4000/';
+let urlGeoJSON = url + "?format=GeoJSON&q=";
+let sqlQuery = "SELECT the_geom, description, name FROM beer_sheva";
+function addPopup(feature, layer) {
+    layer.bindPopup(
+        feature.properties.description + 
+        "<br>Submitted by " + feature.properties.name
+    );
+}
+fetch(urlGeoJSON + sqlQuery)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        L.geoJSON(data, {onEachFeature: addPopup}).addTo(cartoData);
+    });
+
+
+//add draw control
 new L.Control.Draw({
 	draw : {
         polygon : true,
@@ -406,47 +431,103 @@ map.addEventListener("draw:deletestop", function(e) {
     }
 });
 
+// // Create editable popup
+// function createFormPopup() {
+//     let popupContent = 
+//         '<form>' + 
+//         'Bahasa:<br><input type="text" id="input_bahasa"><br>' +
+//         'Dialek:<br><input type="text" id="input_dialek"><br>' +
+// 		'Lokasi:<br><input type="text" id="input_lokasi"><br>' +
+// 		'Catatan:<br><input type="text" id="input_catatan"><br>' +
+// 		'Wiki link:<br><input type="text" id="input_wikilink"><br>' +
+// 		'Sumber:<br><input type="text" id="input_sumber"><br>' +
+//         '<input type="button" value="Submit" id="submit">' + 
+//         '</form>';
+//     drawnItems.bindPopup(popupContent).openPopup();
+//     document.getElementById("submit").addEventListener("click", setData);
+// }
+
 // Create editable popup
 function createFormPopup() {
     let popupContent = 
         '<form>' + 
-        'Bahasa:<br><input type="text" id="input_bahasa"><br>' +
-        'Dialek:<br><input type="text" id="input_dialek"><br>' +
-		'Lokasi:<br><input type="text" id="input_lokasi"><br>' +
-		'Catatan:<br><input type="text" id="input_catatan"><br>' +
-		'Wiki link:<br><input type="text" id="input_wikilink"><br>' +
-		'Sumber:<br><input type="text" id="input_sumber"><br>' +
+        'Description:<br><input type="text" id="input_desc"><br>' +
+        'Name:<br><input type="text" id="input_name"><br>' +
         '<input type="button" value="Submit" id="submit">' + 
         '</form>';
     drawnItems.bindPopup(popupContent).openPopup();
     document.getElementById("submit").addEventListener("click", setData);
 }
 
+
 // Submission
 function setData() {
 
+	// // Get user name and description
+	// let enteredBahasa = document.getElementById("input_bahasa").value;
+    // let enteredDialek = document.getElementById("input_dialek").value;
+	// let enteredLokasi = document.getElementById("input_lokasi").value;
+    // let enteredCatatan = document.getElementById("input_catatan").value;
+	// let enteredWikilink = document.getElementById("input_wikilink").value;
+	// let enteredSumber = document.getElementById("input_sumber").value;
+
 	// Get user name and description
-	let enteredBahasa = document.getElementById("input_bahasa").value;
-    let enteredDialek = document.getElementById("input_dialek").value;
-	let enteredLokasi = document.getElementById("input_lokasi").value;
-    let enteredCatatan = document.getElementById("input_catatan").value;
-	let enteredWikilink = document.getElementById("input_wikilink").value;
-	let enteredSumber = document.getElementById("input_sumber").value;
+    let enteredUsername = document.getElementById("input_name").value;
+    let enteredDescription = document.getElementById("input_desc").value;
 
     // Print user name and description
-    console.log(enteredBahasa);
-    console.log(enteredDialek);
-	console.log(enteredLokasi);
-    console.log(enteredCatatan);
-    console.log(enteredWikilink);
-    console.log(enteredSumber);
+    // console.log(enteredBahasa);
+    // console.log(enteredDialek);
+	// console.log(enteredLokasi);
+    // console.log(enteredCatatan);
+    // console.log(enteredWikilink);
+    // console.log(enteredSumber);
 
-    // Get and print GeoJSON for each drawn layer
-    drawnItems.eachLayer(function(layer) {
-        let drawing = JSON.stringify(layer.toGeoJSON().geometry);
-        console.log(drawing);
-    });
+    // // Get and print GeoJSON for each drawn layer
+    // drawnItems.eachLayer(function(layer) {
+    //     let drawing = JSON.stringify(layer.toGeoJSON().geometry);
+    //     console.log(drawing);
+    // });
     
+	// For each drawn layer
+    drawnItems.eachLayer(function(layer) {
+    
+	// Create SQL expression to insert layer
+		let drawing = JSON.stringify(layer.toGeoJSON().geometry);
+		let sql = 
+			"INSERT INTO beer_sheva (the_geom, description, name) " + 
+			"VALUES (ST_SetSRID(ST_GeomFromGeoJSON('" + 
+			drawing + "'), 4326), '" + 
+			enteredDescription + "', '" + 
+			enteredUsername + "')";
+		console.log(sql);
+
+		// Send the data
+		fetch(url, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: "q=" + encodeURI(sql)
+		})
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(data) {
+				console.log("Data saved:", data);
+			})
+			.catch(function(error) {
+				console.log("Problem saving the data:", error);
+			});
+	
+	// Transfer submitted drawing to the CARTO layer
+	let newData = layer.toGeoJSON();
+	newData.properties.description = enteredDescription;
+	newData.properties.name = enteredUsername;
+	L.geoJSON(newData, {onEachFeature: addPopup}).addTo(cartoData);
+
+	});
+
     // Clear drawn items layer
     drawnItems.closePopup();
     drawnItems.clearLayers();
