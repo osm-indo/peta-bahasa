@@ -123,7 +123,7 @@ window.onload = function () {
 
 	
 	//layer GeoJSON bahasa
-	$.getJSON("data/Data_2.geojson",function(pointData){
+	$.getJSON("data/Data_merged_1Dec.geojson",function(pointData){
 	var pointIcon = L.icon({
     	iconUrl: 'images/marker/map-marker.png',
     	iconSize: [30,30]
@@ -376,7 +376,7 @@ let drawnItems = L.featureGroup().addTo(map);
 let cartoData = L.layerGroup().addTo(map);
 
 // Add Data from Carto using the SQL API
-let url = 'http://134.209.97.166:4000/';
+let url = '134.209.97.166:5432/gisdb' //postgresql://readonlyuser:whatever2@134.209.97.166:5432/gisdb' //postgres://username:password@host:port/database;
 let urlGeoJSON = url + "?format=GeoJSON&q=";
 let sqlQuery = "SELECT the_geom, description, name FROM beer_sheva";
 function addPopup(feature, layer) {
@@ -495,7 +495,7 @@ function setData() {
 	// Create SQL expression to insert layer
 		let drawing = JSON.stringify(layer.toGeoJSON().geometry);
 		let sql = 
-			"INSERT INTO beer_sheva (the_geom, description, name) " + 
+			"INSERT INTO beer_sheva (geom, description, name) " + 
 			"VALUES (ST_SetSRID(ST_GeomFromGeoJSON('" + 
 			drawing + "'), 4326), '" + 
 			enteredDescription + "', '" + 
